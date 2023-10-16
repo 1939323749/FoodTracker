@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		2C5097542ADBAEB0000D0029 /* FoodTrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5097532ADBAEB0000D0029 /* FoodTrackerApp.swift */; };
 		2C5097562ADBAEB0000D0029 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5097552ADBAEB0000D0029 /* ContentView.swift */; };
-		2C5097582ADBAEB0000D0029 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5097572ADBAEB0000D0029 /* Item.swift */; };
 		2C50975A2ADBAEB3000D0029 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C5097592ADBAEB3000D0029 /* Assets.xcassets */; };
 		2C50975D2ADBAEB3000D0029 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C50975C2ADBAEB3000D0029 /* Preview Assets.xcassets */; };
 		2C5097672ADBAEB3000D0029 /* FoodTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5097662ADBAEB3000D0029 /* FoodTrackerTests.swift */; };
@@ -38,7 +37,6 @@
 		2C5097502ADBAEB0000D0029 /* FoodTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FoodTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C5097532ADBAEB0000D0029 /* FoodTrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodTrackerApp.swift; sourceTree = "<group>"; };
 		2C5097552ADBAEB0000D0029 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		2C5097572ADBAEB0000D0029 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		2C5097592ADBAEB3000D0029 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2C50975C2ADBAEB3000D0029 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2C5097622ADBAEB3000D0029 /* FoodTrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FoodTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -98,7 +96,6 @@
 			children = (
 				2C5097532ADBAEB0000D0029 /* FoodTrackerApp.swift */,
 				2C5097552ADBAEB0000D0029 /* ContentView.swift */,
-				2C5097572ADBAEB0000D0029 /* Item.swift */,
 				2C5097592ADBAEB3000D0029 /* Assets.xcassets */,
 				2C50975B2ADBAEB3000D0029 /* Preview Content */,
 			);
@@ -261,7 +258,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2C5097562ADBAEB0000D0029 /* ContentView.swift in Sources */,
-				2C5097582ADBAEB0000D0029 /* Item.swift in Sources */,
 				2C5097542ADBAEB0000D0029 /* FoodTrackerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

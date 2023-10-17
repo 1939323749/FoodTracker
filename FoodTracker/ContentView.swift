@@ -28,6 +28,7 @@ class Item{
 
 struct ContentView: View {
     @State private var isAddItem=false
+    @State private var showDeleteButton=false
     
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
@@ -49,8 +50,30 @@ struct ContentView: View {
                             NavigationLink{
                                 DetailView(item: item)
                             }label:{
-                                ScrollListItemView(item: item)
+                                HStack{
+                                    ScrollListItemView(item: item)
+                                        .onLongPressGesture(perform: {
+                                            showDeleteButton.toggle()
+                                        })
+                                    Spacer()
+                                    if showDeleteButton{
+                                        withAnimation{
+                                            Button(action:{
+                                                modelContext.delete(item)
+                                                showDeleteButton.toggle()
+                                            }){
+                                                Image(systemName: "minus.circle")
+                                                    .foregroundStyle(Color.red)
+                                            }
+                                            .padding()
+                                        }
+                                    }
+                                }
+                                .background(Color.blue.opacity(0.22))
+                                .cornerRadius(12)
                             }
+                            .padding([.leading,.trailing],20)
+
                         }
                     }
                     Spacer()
@@ -81,14 +104,19 @@ struct ScrollListItemView:View {
                 VStack{
                     if let image = item.image{
                         Image(uiImage: UIImage(data: image)!)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 42, height: 42)
-                                .cornerRadius(3)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 42, height: 42)
+                            .cornerRadius(8)
+                    }else{
+                        Image(systemName: "photo")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 42, height: 42)
+                            .cornerRadius(8)
                     }
                 }
                 .padding(.leading)
-                Spacer()
                 VStack{
                     HStack{
                         Text(item.title)
@@ -105,8 +133,7 @@ struct ScrollListItemView:View {
                         Spacer()
                     }
                 }
-
-                .padding(.trailing)
+                Spacer()
             }
         }
         .padding()
@@ -143,7 +170,6 @@ struct DetailView: View {
     @State private var selectedImage:PhotosPickerItem?
     
     var body: some View {
-        VStack {
             VStack{
                 if let image=item.image{
                     Image(uiImage:UIImage(data: image)!)
@@ -158,17 +184,11 @@ struct DetailView: View {
                     Label("add",systemImage: "star")
                 }
             }
-        }
-        .toolbar{
-            ToolbarItem(placement: .automatic){
-                Text(item.title)
-            }
-        }
-        .task(id: selectedImage, {
-            if let selectedImage{
-                selectedImageData=try? await selectedImage.loadTransferable(type: Data.self)
-                item.image=selectedImageData
-            }
+            .task(id: selectedImage, {
+                if let selectedImage{
+                    selectedImageData=try? await selectedImage.loadTransferable(type: Data.self)
+                    item.image=selectedImageData
+                }
         })
     }
 }
@@ -217,49 +237,73 @@ struct AddItemView:View {
     @State var imageData:Data?
     @FocusState private var isInputting:Bool
     var body: some View {
-        VStack{
-            PhotosPicker(selection: $selectedImage, matching: .any(of: [.images,.screenshots]), preferredItemEncoding: .automatic){
-                if let imageData {
-                    Image(uiImage: UIImage(data: imageData)!)
-                        .resizable()
-                        .frame(width: 200, height: 200, alignment: .center)
-                        .padding()
-                        .scaledToFit()
-                        .aspectRatio(contentMode: .fit)
-                }else{
-                    Image(systemName: "photo")
-                        .resizable()
-                        .frame(width: 200, height: 200, alignment: .center)
-                        .padding()
-                        .scaledToFit()
-                        .aspectRatio(contentMode: .fit)
+        NavigationSplitView{
+            VStack{
+                PhotosPicker(selection: $selectedImage, matching: .any(of: [.images,.screenshots]), preferredItemEncoding: .automatic){
+                    if let imageData {
+                        Image(uiImage: UIImage(data: imageData)!)
+                            .resizable()
+                            .frame(width: 200, height: 200, alignment: .center)
+                            .padding()
+                            .scaledToFit()
+                            .aspectRatio(contentMode: .fit)
+                    }else{
+                        Image(systemName: "photo")
+                            .resizable()
+                            .frame(width: 200, height: 200, alignment: .center)
+                            .padding()
+                            .scaledToFit()
+                            .aspectRatio(contentMode: .fit)
+                    }
+                }
+                TextField("input the title",text:$title)
+                    .focused($isInputting)
+                    .textFieldStyle(.roundedBorder)
+                    .padding([.leading,.trailing],20)
+                    .clipShape(.capsule)
+                    .padding()
+                StarsView(item: Item(title: title, starCount: starCount))
+                    .padding()
+                Button(action:{
+                    isInputting.toggle()
+                    if !title.elementsEqual(""){
+                        context.insert(Item(title: title, starCount: starCount,image: imageData))
+                    }
+                    isPresented.toggle()
+                }){
+                    Text("Done")
+                        .font(.title)
+                        .foregroundStyle(Color.gray)
+                        
+                        
+                        .padding(10)
+                }
+                .frame(width: 120,height: 50)
+                .background(Color.blue.opacity(0.2))
+                .cornerRadius(8)
+            }
+            .toolbar(content: {
+                ToolbarItem(placement:.topBarLeading){
+                    Button(action:{
+                        isPresented.toggle()
+                    }){
+                        Text("Cancel")
+                    }
+                }
+            })
+            .task(id:selectedImage){
+                if let imagedata=try? await selectedImage?.loadTransferable(type: Data.self){
+                    imageData=imagedata
                 }
             }
-            TextField("input the title",text:$title)
-                .focused($isInputting)
-                .textFieldStyle(.roundedBorder)
-                .padding([.leading,.trailing],20)
-            StarsView(item: Item(title: title, starCount: starCount))
-                .padding()
-            Button(action:{
-                isInputting.toggle()
-                if !title.elementsEqual(""){
-                    context.insert(Item(title: title, starCount: starCount,image: imageData))
-                }
-                isPresented.toggle()
-            }){
-                Text("Done")
-                    .font(.title)
-                    .foregroundStyle(Color.gray)
-                    .background(Color.blue.opacity(0.2))
-                    .cornerRadius(8)
-                    .padding(10)
-            }
-        }
-        .task(id:selectedImage){
-            if let imagedata=try? await selectedImage?.loadTransferable(type: Data.self){
-                imageData=imagedata
-            }
+        }detail: {
+            Text("Add an item")
         }
     }
+}
+
+#Preview {
+    @Environment(\.modelContext) var modelContext
+    @State var isPresented = true
+    return AddItemView(context: modelContext, isPresented: $isPresented)
 }

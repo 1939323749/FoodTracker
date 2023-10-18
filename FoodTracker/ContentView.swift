@@ -55,6 +55,8 @@ struct ContentView: View {
                         ForEach(items,id:\.id) { item in
                             NavigationLink{
                                 DetailView(item: item)
+                                    .padding(.top,72)
+                                Spacer()
                             }label:{
                                 ItemLabelView(item: item, modelContext: modelContext, showDeleteButton: $showDeleteButton)
                             }
@@ -241,10 +243,18 @@ struct DetailView: View {
                 .padding(.leading)
                 VStack{
                     HStack{
-                        Text(item.title)
-                            .font(.largeTitle)
-                            .bold()
-                            .padding([.leading,.top],6)
+                        if !item.title.elementsEqual(""){
+                            Text(item.title)
+                                .font(.largeTitle)
+                                .bold()
+                                .padding([.leading,.top],6)
+                        }else{
+                            Text("Title")
+                                .font(.largeTitle)
+                                .bold()
+                                .foregroundStyle(Color.white.opacity(0.42))
+                                .padding([.leading,.top],6)
+                        }
                         Spacer()
                     }
                     .padding(.top,-5)

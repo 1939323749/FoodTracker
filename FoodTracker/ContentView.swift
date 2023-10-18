@@ -209,6 +209,7 @@ struct DetailView: View {
     @State private var selectedImage:PhotosPickerItem?
     @State private var remark=""
     @State private var editRemark=false
+    @State private var editTitle=false
     @FocusState var isEditting
     
     var body: some View {
@@ -250,12 +251,12 @@ struct DetailView: View {
                     .onTapGesture {
                         if !isEditting{
                             isEditting.toggle()
-                            editRemark.toggle()
+                            editTitle.toggle()
                         }
                     }
                     Spacer()
                     HStack{
-                        if !editRemark{
+                        if !editTitle && !editRemark{
                             VStack{
                                 HStack{
                                     Text(item.remark ?? "Remark is empty")
@@ -266,7 +267,7 @@ struct DetailView: View {
                                 Spacer()
                             }
                             .padding()
-                        }else{
+                        }else if editRemark{
                             VStack{
                                 TextField(text: $remark){
                                     if let remark = item.remark,!remark.elementsEqual(""){
@@ -280,6 +281,15 @@ struct DetailView: View {
                                 Spacer()
                             }
 
+                        }else{
+                            VStack{
+                                TextField(text: $item.title){
+                                    Text(item.title)
+                                }
+                                .focused($isEditting)
+                                .padding([.leading,.trailing,.bottom],20)
+                                Spacer()
+                            }
                         }
                         Spacer()
                     }
@@ -293,8 +303,6 @@ struct DetailView: View {
                     .background(Color.white)
                     .clipShape(RoundedRectangle(cornerRadius: 24))
                     Spacer()
-                    
-
                     HStack{
                         if !isEditting{
                             StarsView(item: item)
@@ -306,6 +314,7 @@ struct DetailView: View {
                                 }
                                 isEditting.toggle()
                                 editRemark=false
+                                editTitle=false
                             }){
                                 Text("Done")
                             }
@@ -447,7 +456,11 @@ struct AddItemView:View {
 //}
 
 #Preview{
-    DetailView(item: Item(title: "test", starCount: 1))
+    return VStack{
+        DetailView(item: Item(title: "test", starCount: 1))
+            .padding(.top,50)
+        Spacer()
+    }
 }
 
 #Preview{
@@ -478,7 +491,6 @@ struct AddItemView:View {
                             .aspectRatio(contentMode: .fit)
                     }
                 }
-                .padding([.horizontal,.vertical])
             }
             .frame(width: 80)
             .padding(.leading)

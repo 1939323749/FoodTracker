@@ -397,61 +397,63 @@ struct AddItemView:View {
     @FocusState private var isInputting:Bool
     var body: some View {
         NavigationSplitView{
-            VStack{
-                PhotosPicker(selection: $selectedImage, matching: .any(of: [.images,.screenshots]), preferredItemEncoding: .automatic){
-                    if let imageData {
-                        Image(uiImage: UIImage(data: imageData)!)
-                            .resizable()
-                            .frame(width: 200, height: 200, alignment: .center)
-                            .padding()
-                            .scaledToFit()
-                            .aspectRatio(contentMode: .fit)
-                            .clipShape(.capsule)
-                    }else{
-                        Image(systemName: "photo")
-                            .resizable()
-                            .frame(width: 192, height: 192, alignment: .center)
-                            .padding()
-                            .scaledToFit()
-                            .aspectRatio(contentMode: .fit)
+            ScrollView{
+                VStack{
+                    PhotosPicker(selection: $selectedImage, matching: .any(of: [.images,.screenshots]), preferredItemEncoding: .automatic){
+                        if let imageData {
+                            Image(uiImage: UIImage(data: imageData)!)
+                                .resizable()
+                                .frame(width: 200, height: 200, alignment: .center)
+                                .padding()
+                                .scaledToFit()
+                                .aspectRatio(contentMode: .fit)
+                                .clipShape(.capsule)
+                        }else{
+                            Image(systemName: "photo")
+                                .resizable()
+                                .frame(width: 192, height: 192, alignment: .center)
+                                .padding()
+                                .scaledToFit()
+                                .aspectRatio(contentMode: .fit)
+                        }
                     }
-                }
-                TextField("input the title",text:$title)
-                    .focused($isInputting)
-                    .textFieldStyle(.roundedBorder)
-                    .padding([.leading,.trailing],20)
-                    .clipShape(.capsule)
-                    .padding()
-                StarsView(item: Item(title: title, starCount: starCount))
-                    .padding([.top,.bottom],20)
-                Button(action:{
-                    isInputting.toggle()
-                    if !title.elementsEqual(""){
-                        context.insert(Item(title: title, starCount: starCount,image: imageData))
-                    }
-                    isPresented.toggle()
-                }){
-                    Text("Done")
-                        .font(.title)
-                        .foregroundStyle(Color.gray)
-                        .padding(10)
-                }
-                .frame(width: 120,height: 50)
-                .background(Color.blue.opacity(0.2))
-                .clipShape(Capsule())
-            }
-            .toolbar(content: {
-                ToolbarItem(placement:.topBarLeading){
+                    TextField("input the title",text:$title)
+                        .focused($isInputting)
+                        .textFieldStyle(.roundedBorder)
+                        .padding([.leading,.trailing],20)
+                        .clipShape(.capsule)
+                        .padding()
+                    StarsView(item: Item(title: title, starCount: starCount))
+                        .padding([.top,.bottom],20)
                     Button(action:{
+                        isInputting.toggle()
+                        if !title.elementsEqual(""){
+                            context.insert(Item(title: title, starCount: starCount,image: imageData))
+                        }
                         isPresented.toggle()
                     }){
-                        Text("Cancel")
+                        Text("Done")
+                            .font(.title)
+                            .foregroundStyle(Color.gray)
+                            .padding(10)
                     }
+                    .frame(width: 120,height: 50)
+                    .background(Color.blue.opacity(0.2))
+                    .clipShape(Capsule())
                 }
-            })
-            .task(id:selectedImage){
-                if let imagedata=try? await selectedImage?.loadTransferable(type: Data.self){
-                    imageData=imagedata
+                .toolbar(content: {
+                    ToolbarItem(placement:.topBarLeading){
+                        Button(action:{
+                            isPresented.toggle()
+                        }){
+                            Text("Cancel")
+                        }
+                    }
+                })
+                .task(id:selectedImage){
+                    if let imagedata=try? await selectedImage?.loadTransferable(type: Data.self){
+                        imageData=imagedata
+                    }
                 }
             }
         }detail: {
